@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Admin - {{ current_user.name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=256) }}">
+</div>
+<h3>Users</h3>
+{% include '_users.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'.admin',name=current_user.name) }}
+</div>
+{% endif %}
+{% endblock %}

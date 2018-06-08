@@ -1,0 +1,7 @@
+Dear {{ user.username }},
+
+Welcome to Commission!
+
+Confirm your account!!! Click on the following link:
+
+{{ url_for('auth.confirm', token=token, _external=True) }}

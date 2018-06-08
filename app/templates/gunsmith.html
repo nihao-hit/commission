@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Gunsmith - {{ user.name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+</div>
+<h3>Salespersons by {{ user.name }}</h3>
+{% include '_salespersons.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'.gunsmith',name=user.name) }}
+</div>
+{% endif %}
+{% endblock %}

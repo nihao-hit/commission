@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Commission{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Welcome to commission,{% if current_user.is_authenticated %}{{ current_user.name }}{% else %}Stranger{% endif %}!</h1>
+</div>
+<div class="post-tabs">
+    <ul class="nav nav-tabs">
+        <li {% if not monthreport %} class="active"{% endif %}><a href="{{ url_for('.soldnote') }}">Soldnote</a></li>
+        <li {% if monthreport %} class="active"{% endif %}><a href="{{ url_for('.monthreport') }}">Monthreport</a></li>
+    </ul>
+    {% if monthreport %}
+    {% include '_reports.html' %}
+    {% else %}
+    {% include '_orders.html' %}
+    {% endif %}
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'.index') }}
+</div>
+{% endif %}
+{% endblock %}

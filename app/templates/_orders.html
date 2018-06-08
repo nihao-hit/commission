@@ -1,0 +1,52 @@
+<ul class="posts">
+    {% for order in orders %}
+    <li class="post">
+        <div class="post-thumbnail">
+            <a href="{{ url_for('.salesperson',name=order.master.name) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ order.master.gravatar(size=20) }}">
+            </a>
+        </div>
+        <div class="post-content">
+            <div class="post-author">
+                <a href="{{ url_for('.salesperson',name=order.master.name) }}">
+                    {{ order.master.name }}
+                </a>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p>Locks</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Stocks</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Barrels</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Total</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Date</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p>{{ order.locks }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ order.stocks }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ order.barrels }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ order.total }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ moment(order.date).format('YYYY-MM-DD') }}</p>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

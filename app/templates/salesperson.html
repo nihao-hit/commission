@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Salesperson - {{ user.name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+    <div class="profile-header">
+        <h1>{{ user.name }}</h1>
+        <h3>Goods</h3>
+        <ul class="posts">
+            <li class="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Locks</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Stocks</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Barrels</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>{{ user.goods.first().locks }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>{{ user.goods.first().stocks }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>{{ user.goods.first().barrels }}</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="row">
+            <div class="col-md-2">
+                <a class="btn btn-primary" href="{{ url_for('.sale',name=user.name) }}">Sale</a>
+            </div>
+            <div class="col-md-2">
+                <a {% if not user.canReport() %} class="btn disabled"
+                   {% else %} class="btn btn-primary"
+                   {% endif %} href="{{ url_for('.report',name=user.name) }}">Report</a>
+            </div>
+        </div>
+    </div>
+</div>
+<h3>Orders by {{ user.name }}</h3>
+{% include '_orders.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'.salesperson',name=user.name) }}
+</div>
+{% endif %}
+{% endblock %}

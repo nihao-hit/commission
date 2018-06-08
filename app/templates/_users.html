@@ -1,0 +1,47 @@
+<ul class="posts">
+    {% for user in users %}
+    <li class="post">
+        <div class="post">
+        <div class="post-thumbnail">
+            {% if user.role.name == 'Salesperson' %}
+            <a href="{{ url_for('.salesperson',name=user.name) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}">
+            </a>
+            {% else %}
+            <a href="{{ url_for('.gunsmith',name=user.name) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}">
+            </a>
+            {% endif %}
+
+        </div>
+        <div class="post-content">
+            <div class="post-author">
+                {% if user.role.name == 'Salesperson' %}
+                <a href="{{ url_for('.salesperson',name=user.name) }}">
+                    {{ user.name }}
+                </a>
+                {% else %}
+                <a href="{{ url_for('.gunsmith',name=user.name) }}">
+                    {{ user.name }}
+                </a>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4">
+                    {% if user.confirmed %}
+                    <a class="btn btn-primary"
+                       href="{{ url_for('.unconfirm',name=current_user.name,u=user.name) }}">Unconfirm</a>
+                    {% else %}
+                    <a class="btn btn-primary"
+                       href="{{ url_for('.confirm',name=current_user.name,u=user.name) }}">Confirm</a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </li>
+    {% endfor %}
+</ul>
