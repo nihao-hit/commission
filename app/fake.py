@@ -1,7 +1,7 @@
 from random import randint
 from faker import Faker
 from . import db
-from .models import User,Order,Goods
+from .models import User,Order,Goods,Report
 
 
 def users(count=100):

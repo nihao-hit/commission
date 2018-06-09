@@ -5,20 +5,19 @@ from . import main
 from .. import db
 from ..models import Role,User,Order,Goods,Report
 from ..decorators import role_required
-from .forms import SaleForm
-from math import isclose
+from .forms import SaleForm,QueryForm
+from datetime import datetime
+from sqlalchemy import extract,and_
 
 
 @main.route('/')
 def index():
-    page = request.args.get('page',1,type=int)
-    monthreport = bool(request.cookies.get('monthreport',''))
+    page = request.args.get('page', 1, type=int)
+    monthreport = bool(request.cookies.get('monthreport', ''))
     if monthreport:
         query = Report.query.order_by(Report.date.desc())
     else:
         query = Order.query.order_by(Order.date.desc())
-    if page == -1:
-        page = query.count()//10+1
     pagination = query.paginate(
         page,per_page=10,error_out=False
     )
@@ -148,6 +147,9 @@ def sale(name):
     form = SaleForm()
     if form.validate_on_submit():
         my_goods = user.goods.first()
+        if not my_goods:
+            flash('You have not goods.')
+            return redirect(url_for('.salesperson',name=name))
         locks = my_goods.locks
         stocks = my_goods.stocks
         barrels = my_goods.barrels
@@ -155,14 +157,26 @@ def sale(name):
             or form.barrels.data>barrels:
             flash('Invalid Numbers.')
             return redirect(url_for('.sale',name=name))
-        order = Order(user_id=user.id,
-                      locks=form.locks.data,
-                      stocks=form.stocks.data,
-                      barrels=form.barrels.data
-                      )
-        order.calculate_total()
-        db.session.add(order)
-        db.session.commit()
+        try:
+            order = Order(user_id=user.id,
+                          locks=form.locks.data,
+                          stocks=form.stocks.data,
+                          barrels=form.barrels.data
+                          )
+            order.calculate_total()
+            db.session.add(order)
+
+
+            goods = user.goods.first()
+            goods.locks -= locks
+            goods.stocks -= stocks
+            goods.barrels -= barrels
+            db.session.add(goods)
+
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash('The sale is failed.')
         flash('A sale has been completed.')
         return redirect(url_for('.salesperson',name=name))
     return render_template('sale.html',form=form)

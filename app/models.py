@@ -7,7 +7,6 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_login import UserMixin,AnonymousUserMixin
 from . import db,login_manager
-from datetime import date
 
 
 class Role(db.Model):
@@ -150,7 +149,10 @@ class User(db.Model,UserMixin):
     def canReport(self):
         today = datetime.date.today()
         _, lastday = calendar.monthrange(today.year, today.month)
-        if today.day != lastday:
+
+        report = self.reports.order_by(Report.date.desc()).first()
+        if today.day != lastday or \
+                report and report.date.month == today.month:
             return False
         return True
 
