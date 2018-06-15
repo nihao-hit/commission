@@ -1,15 +1,15 @@
 <ul class="posts">
-    {% for order in orders %}
+    {% for report in reports %}
     <li class="post">
         <div class="post-thumbnail">
-            <a href="{{ url_for('.salesperson',name=order.master.name) }}">
-                <img class="img-rounded profile-thumbnail" src="{{ order.master.gravatar(size=20) }}">
+            <a href="{{ url_for('.salesperson',name=report.master.name) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ report.master.gravatar(size=20) }}">
             </a>
         </div>
         <div class="post-content">
             <div class="post-author">
-                <a href="{{ url_for('.salesperson',name=order.master.name) }}">
-                    {{ order.master.name }}
+                <a href="{{ url_for('.salesperson',name=report.master.name) }}">
+                    {{ report.master.name }}
                 </a>
             </div>
             <div class="row">
@@ -34,22 +34,22 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p>{{ order.locks }}</p>
+                    <p>{{ report.locks }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ order.stocks }}</p>
+                    <p>{{ report.stocks }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ order.barrels }}</p>
+                    <p>{{ report.barrels }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ order.total }}</p>
+                    <p>{{ report.total }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ order.commission }}</p>
+                    <p>{{ report.commission }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ moment(order.date).format('YYYY-MM-DD') }}</p>
+                    <p>{{ '{}年{}月'.format(report.year,report.month) }}</p>
                 </div>
             </div>
         </div>

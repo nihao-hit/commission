@@ -26,6 +26,9 @@
                     <p>Total</p>
                 </div>
                 <div class="col-md-2">
+                    <p>Town</p>
+                </div>
+                <div class="col-md-2">
                     <p>Date</p>
                 </div>
             </div>
@@ -43,7 +46,10 @@
                     <p>{{ order.total }}</p>
                 </div>
                 <div class="col-md-2">
-                    <p>{{ moment(order.date).format('YYYY-MM-DD') }}</p>
+                    <p>{{ order.town.name }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ '{}年{}月{}日'.format(order.year,order.month,order.day) }}</p>
                 </div>
             </div>
         </div>

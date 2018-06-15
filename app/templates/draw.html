@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Sold Draw{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h3>这里是<em>{{ moment().format('YYYY') }}</em>年过去<em>{{ month }}</em>
+        个月的销售情况统计信息，过去几个月，共卖出枪托<em>{{ total[1] }}</em>个，
+        扳机<em>{{ total[0] }}</em>个，枪管<em>{{ total[2] }}</em>个，
+        总利润<em>{{ total[3] }}</em>，共发放佣金<em>{{ total[4] }}</em>，
+        图表统计信息如下:
+        <a href="#1">枪托，扳机，枪管月销售数量分布</a>，<a href="#2">月利润占比</a>，
+        <a href="#3">省份利润占比</a>，<a href="#4">销售员佣金排序</a>。
+    </h3>
+</div>
+<div class="post-tabs">
+        <div id="1">
+            <h3>枪托，扳机，枪管月销售数量分布</h3>
+            <img src="{{ 'data:image/png;base64,{}'.format(mN) }}"/>
+        </div>
+        <div id="2">
+            <h3>月利润占比</h3>
+            <img src="{{ 'data:image/png;base64,{}'.format(mP) }}"/>
+        </div>
+        <div id="3">
+            <h3>省份利润占比</h3>
+            <img src="{{ 'data:image/png;base64,{}'.format(t) }}"/>
+        </div>
+        <div id="4">
+            <h3>销售员佣金排序</h3>
+            <img src="{{ 'data:image/png;base64,{}'.format(s) }}"/>
+        </div>
+</div>
+{% endblock %}

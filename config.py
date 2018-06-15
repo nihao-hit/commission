@@ -2,6 +2,8 @@ import os
 
 
 class Config:
+    SERVER_NAME = 'Commission.localdomain'
+
     SECRET_KEY = os.environ.get('SECRET_KEY','hard to guess string')
 
     MAIL_SERVER = 'smtp.163.com'
@@ -19,3 +21,16 @@ class Config:
     @staticmethod
     def init_app(app):
         pass
+
+
+class TestConfig(Config):
+    WTF_CSRF_ENABLED = False
+    @staticmethod
+    def init_app(app):
+        pass
+
+
+config = {
+    'prod':Config,
+    'test':TestConfig
+}

@@ -2,19 +2,19 @@ from app.models import User,Goods,Order
 from flask_wtf import FlaskForm
 from wtforms import StringField,BooleanField,SelectField, \
     PasswordField,SubmitField
-from wtforms.validators import DataRequired,Length,Email,Regexp, \
-    EqualTo
+from wtforms.validators import DataRequired,Length,Email,EqualTo
+#Regexp, \
 from wtforms import ValidationError
 
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(),Length(1,64),
                                          Email()])
-    name = StringField('Name',validators=[DataRequired(),Length(1,64),
-                            Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+    name = StringField('Name',validators=[DataRequired(),Length(1,64)])
+    '''Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                             'Usernames must have only letters,numbers,dots or \
                             underscores')
-                            ])
+                            ])'''
     password = StringField('Password',validators=[DataRequired(),
                     EqualTo('password2',message='Password must match.')])
     password2 = PasswordField('Confirm password',validators=[DataRequired()])

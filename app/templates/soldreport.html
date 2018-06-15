@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+
+{% block title %}Sold Report{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-4">{{ wtf.quick_form(form) }}</div>
+</div>
+<div class="post-tabs">
+    {% include '_reports.html' %}
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'.soldreport') }}
+</div>
+{% endif %}
+{% endblock %}

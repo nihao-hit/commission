@@ -12,7 +12,7 @@ from . import db,login_manager
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(64),unique=True)
+    name = db.Column(db.String(64))
     users = db.relationship('User',backref='role',lazy='dynamic')
 
     @staticmethod
@@ -32,7 +32,7 @@ class Role(db.Model):
 class User(db.Model,UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(64), unique=True, index=True)
+    name = db.Column(db.String(64),index=True)
 
     email = db.Column(db.String(64),unique=True,index=True)
     confirmed = db.Column(db.Boolean, default=False)
@@ -148,21 +148,15 @@ class User(db.Model,UserMixin):
 
     def canReport(self):
         today = datetime.date.today()
-        _, lastday = calendar.monthrange(today.year, today.month)
-
-        report = self.reports.order_by(Report.date.desc()).first()
-        if today.day != lastday or \
-                report and report.date.month == today.month:
+        report = self.reports.filter_by(year=today.year). \
+            filter_by(month=today.month).first()
+        if report:
             return False
         return True
 
-    def report(self):
-        today = datetime.date.today()
-        orders = self.orders.filter(and_(
-            extract('year', Order.date) == today.year,
-            extract('month', Order.date) == today.month
-        )
-        ).all()
+    def report(self,today):
+        orders = self.orders.filter_by(year=today.year). \
+            filter_by(month=today.month).all()
         locks = 0
         stocks = 0
         barrels = 0
@@ -176,7 +170,9 @@ class User(db.Model,UserMixin):
                              locks=locks,
                              stocks=stocks,
                              barrels=barrels,
-                             total=total))
+                             total=total,
+                             year=today.year,
+                             month=today.month))
 
     def canCommission(self,name):
         salesperson = User.query.filter_by(name=name).first()
@@ -185,7 +181,8 @@ class User(db.Model,UserMixin):
             return True
         return False
 
-    def commission(self,salesperson):
+    @staticmethod
+    def commission(salesperson):
         report = salesperson.reports.filter_by(commission=0.0).first()
         commission = (report.total - 1800) * 0.2 + \
             ((report.total - 1800) - (report.total - 1000)) * 0.15 + \
@@ -238,9 +235,19 @@ class Order(db.Model):
     stocks = db.Column(db.Integer)
     barrels = db.Column(db.Integer)
     total = db.Column(db.Integer)
-    date = db.Column(db.Date,default=datetime.date.today,index=True)
+    year = db.Column(db.Integer)
+    month = db.Column(db.Integer)
+    day = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),
                         index=True)
+    town_id = db.Column(db.Integer,db.ForeignKey('towns.id'))
+
+    def __init__(self,*args,**kwargs):
+        super(Order,self).__init__(*args,**kwargs)
+        today = datetime.date.today()
+        self.year = today.year
+        self.month = today.month
+        self.day = today.day
 
     def calculate_total(self):
         self.total = self.locks*45+self.stocks*30+self.barrels*25
@@ -257,14 +264,15 @@ class Report(db.Model):
     barrels = db.Column(db.Integer)
     total = db.Column(db.Integer)
     commission = db.Column(db.Float,default=0.0)
-    date = db.Column(db.Date,default=datetime.date.today,index=True)
+    year = db.Column(db.Integer)
+    month = db.Column(db.Integer)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'),
                         index=True)
 
     def __repr__(self):
-        return '<Report {}>'.format(self.date)
+        return '<Report {}年{}月>'.format(self.year,self.month)
 
-'''
+
 class Town(db.Model):
     __tablename__ = 'towns'
     id = db.Column(db.Integer,primary_key=True)
@@ -287,4 +295,4 @@ class Town(db.Model):
 
     def __repr__(self):
         return '<Town {}>'.format(self.name)
-'''
+
