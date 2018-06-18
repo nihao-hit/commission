@@ -47,8 +47,18 @@
         </div>
     </div>
 </div>
-<h3>Orders by {{ user.name }}</h3>
-{% include '_orders.html' %}
+<div class="post-tabs">
+    <ul class="nav nav-tabs">
+        <li {% if not r %} class="active"{% endif %}><a href="{{ url_for('.orders',name=user.name) }}">Orders</a></li>
+        <li {% if r %} class="active"{% endif %}><a href="{{ url_for('.reports',name=user.name) }}">Reports</a></li>
+    </ul>
+    {% if not r %}
+    {% include '_orders.html' %}
+    {% else %}
+    {% include '_reports.html' %}
+    {% endif %}
+</div>
+
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination,'.salesperson',name=user.name) }}

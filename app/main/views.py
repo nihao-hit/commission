@@ -73,21 +73,6 @@ def index():
     return render_template('index.html',pagination=pagination,
                            orders=orders,form=form)
 
-'''
-@main.route('/soldnote')
-def soldnote():
-    res = make_response(redirect(url_for('.index')))
-    res.set_cookie('monthreport','')
-    return res
-
-
-@main.route('/monthreport')
-def monthreport():
-    res = make_response(redirect(url_for('.index')))
-    res.set_cookie('monthreport','1')
-    return res
-'''
-
 
 @main.route('/soldreport',methods=['GET','POST'])
 def soldreport():
@@ -238,15 +223,42 @@ def salesperson(name):
         flash('User is not exist.')
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
-    pagination = Order.query.filter_by(user_id=user.id). \
-        filter_by(year=today.year).filter_by(month=today.month). \
-        order_by(Order.year.desc(),Order.month.desc(),
-                 Order.day.desc()).paginate(
-        page=page, per_page=10, error_out=False
-    )
-    orders = pagination.items
+    r = bool(request.cookies.get('r',''))
+    reports = None
+    orders = None
+    if r:
+        query = Report.query.filter_by(user_id=user.id). \
+            filter_by(year=today.year).order_by(Report.month.desc())
+        pagination = query.paginate(
+            page=page, per_page=10, error_out=False
+        )
+        reports = pagination.items
+    else:
+        query = Order.query.filter_by(user_id=user.id). \
+            filter_by(year=today.year).filter_by(month=today.month). \
+            order_by(Order.year.desc(), Order.month.desc(),Order.day.desc())
+        pagination = query.paginate(
+            page=page, per_page=10, error_out=False
+        )
+        orders = pagination.items
     return render_template('salesperson.html', pagination=pagination,
-                           orders=orders,user=user)
+                           orders=orders,reports=reports,user=user,r=r)
+
+
+@main.route('/orders')
+def orders():
+    name = request.args.get('name')
+    res = make_response(redirect(url_for('.salesperson',name=name)))
+    res.set_cookie('r','')
+    return res
+
+
+@main.route('/reports')
+def reports():
+    name = request.args.get('name')
+    res = make_response(redirect(url_for('.salesperson',name=name)))
+    res.set_cookie('r','1')
+    return res
 
 
 @main.route('/salesperson/<name>/sale',methods=['GET','POST'])
